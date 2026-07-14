@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackForge 2026 — Where Innovation Meets Execution</title>
+<style>
+/* ==========================================================================
+   HackForge 2026 — Design tokens
+   Palette:  paper #F6F5F1 · ink #12141A · indigo #4438CA (action)
+             amber #E8A93A (live/status) · line #DEDBD2 (hairline)
+   Type:     "JetBrains Mono" (display/commits) + "Inter" (body/UI)
+   Signature: terminal commit-log motif — $ prompts, commit hashes, diff tags
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --paper:#F6F5F1;
+  --paper-dim:#EDEBE3;
+  --ink:#12141A;
+  --ink-soft:#4B4E58;
+  --ink-faint:#8A8C93;
+  --line:#DEDBD2;
+  --indigo:#4438CA;
+  --indigo-deep:#332B96;
+  --indigo-tint:#EAE8FB;
+  --amber:#E8A93A;
+  --amber-tint:#FBEDD3;
+  --green:#2E8B57;
+  --red:#C4433A;
+  --card:#FFFFFF;
+  --radius:14px;
+  --radius-lg:20px;
+  --shadow:0 1px 2px rgba(18,20,26,.04), 0 8px 24px rgba(18,20,26,.06);
+  --mono:'JetBrains Mono', monospace;
+  --sans:'Inter', sans-serif;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit; text-decoration:none;}
+img{max-width:100%; display:block;}
+h1,h2,h3,h4{font-family:var(--mono); letter-spacing:-0.02em; margin:0 0 .5em; color:var(--ink);}
+p{margin:0 0 1em; color:var(--ink-soft);}
+ul{margin:0; padding:0; list-style:none;}
+:focus-visible{outline:2px solid var(--indigo); outline-offset:2px;}
+
+.wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+@media (max-width:640px){.wrap{padding:0 18px;}}
+
+/* ---------- Prompt / eyebrow motif ---------- */
+.prompt{
+  font-family:var(--mono);
+  font-size:.8rem;
+  color:var(--indigo);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--indigo-tint);
+  border:1px solid #DAD5F7;
+  padding:5px 12px;
+  border-radius:999px;
+  margin-bottom:18px;
+}
+.prompt::before{content:"$"; color:var(--amber); font-weight:700;}
+
+/* ---------- Header / Nav ---------- */
+.site-header{
+  position:sticky; top:0; z-index:50;
+  background:rgba(246,245,241,.88);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 0;
+}
+.logo{font-family:var(--mono); font-weight:800; font-size:1.15rem; display:flex; align-items:center; gap:6px;}
+.logo em{font-style:normal; color:var(--indigo);}
+.nav-links{display:flex; gap:26px; align-items:center; font-size:.92rem; font-weight:500;}
+.nav-links a{color:var(--ink-soft); transition:color .15s;}
+.nav-links a:hover, .nav-links a[aria-current="page"]{color:var(--ink);}
+.nav-cta{display:flex; gap:10px; align-items:center;}
+.nav-toggle{display:none;}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-family:var(--sans); font-weight:700; font-size:.92rem;
+  padding:11px 22px; border-radius:10px; border:1px solid transparent;
+  cursor:pointer; transition:transform .12s ease, background .15s;
+}
+.btn:hover{transform:translateY(-1px);}
+.btn-primary{background:var(--ink); color:var(--paper);}
+.btn-primary:hover{background:var(--indigo);}
+.btn-accent{background:var(--indigo); color:#fff;}
+.btn-accent:hover{background:var(--indigo-deep);}
+.btn-ghost{background:transparent; color:var(--ink); border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--ink);}
+.btn-sm{padding:8px 16px; font-size:.82rem;}
+.btn-block{width:100%;}
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb{
+  font-family:var(--mono); font-size:.78rem; color:var(--ink-faint);
+  padding:14px 0; border-bottom:1px dashed var(--line);
+}
+.breadcrumb a{color:var(--ink-faint);}
+.breadcrumb a:hover{color:var(--indigo);}
+.breadcrumb .sep{margin:0 8px; color:var(--line);}
+.breadcrumb .current{color:var(--indigo);}
+
+/* ---------- Hero ---------- */
+.hero{
+  padding:88px 0 72px;
+  background:
+    radial-gradient(circle at 85% 10%, var(--indigo-tint) 0%, transparent 45%),
+    var(--paper);
+  border-bottom:1px solid var(--line);
+}
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center;}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{font-size:clamp(2.4rem,5vw,4rem); line-height:1.02; margin-bottom:.3em;}
+.hero h1 .accent{color:var(--indigo);}
+.hero .lede{font-size:1.15rem; max-width:46ch;}
+.hero-actions{display:flex; gap:14px; margin-top:28px; flex-wrap:wrap;}
+
+.terminal{
+  background:var(--ink); color:#D8D9DE; border-radius:var(--radius-lg);
+  padding:22px 24px; font-family:var(--mono); font-size:.85rem;
+  box-shadow:var(--shadow); border:1px solid #24262F;
+}
+.terminal .dots{display:flex; gap:6px; margin-bottom:16px;}
+.terminal .dots span{width:10px; height:10px; border-radius:50%; display:inline-block; background:#3A3C46;}
+.terminal .dots span:nth-child(1){background:#E8746C;}
+.terminal .dots span:nth-child(2){background:var(--amber);}
+.terminal .dots span:nth-child(3){background:#5EBE8B;}
+.terminal .line{margin-bottom:6px;}
+.terminal .line .p{color:var(--amber);}
+.terminal .line .ok{color:#5EBE8B;}
+.terminal .line .muted{color:#7C7E88;}
+
+/* ---------- Stats ---------- */
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:56px;}
+@media (max-width:800px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat-card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:22px 20px; box-shadow:var(--shadow);
+}
+.stat-card .num{font-family:var(--mono); font-size:2rem; font-weight:700; color:var(--indigo);}
+.stat-card .label{font-size:.85rem; color:var(--ink-faint); margin-top:4px;}
+
+/* ---------- Sections ---------- */
+.section{padding:80px 0;}
+.section-tight{padding:56px 0;}
+.section-alt{background:var(--paper-dim); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+.section-head{max-width:640px; margin-bottom:44px;}
+.section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);}
+.section-head p{font-size:1.02rem;}
+
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+.grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+@media (max-width:900px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.grid-3,.grid-4,.grid-2{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:26px; box-shadow:var(--shadow);
+}
+.card .tag{
+  font-family:var(--mono); font-size:.72rem; color:var(--indigo); background:var(--indigo-tint);
+  padding:3px 9px; border-radius:6px; display:inline-block; margin-bottom:14px;
+}
+.card h3{font-size:1.05rem; margin-bottom:8px;}
+.card p{font-size:.92rem; margin-bottom:0;}
+.icon-box{
+  width:42px; height:42px; border-radius:10px; background:var(--ink);
+  color:var(--paper); display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-weight:700; margin-bottom:16px;
+}
+
+/* ---------- Testimonials ---------- */
+.testimonial{border-left:3px solid var(--indigo); padding-left:18px;}
+.testimonial p{font-size:1.05rem; color:var(--ink); font-style:italic;}
+.testimonial .who{font-family:var(--mono); font-size:.8rem; color:var(--ink-faint);}
+
+/* ---------- Forms ---------- */
+.form-card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius-lg);
+  padding:40px; box-shadow:var(--shadow);
+}
+.form-section-title{
+  font-family:var(--mono); font-size:.78rem; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--indigo); border-bottom:1px dashed var(--line); padding-bottom:10px; margin:32px 0 20px;
+}
+.form-section-title:first-child{margin-top:0;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px;}
+@media (max-width:640px){.field-row{grid-template-columns:1fr;}}
+label{display:block; font-size:.85rem; font-weight:600; margin-bottom:6px; color:var(--ink);}
+.hint{font-size:.75rem; color:var(--ink-faint); font-weight:400; margin-left:6px;}
+input[type=text], input[type=email], input[type=tel], input[type=url], input[type=number], input[type=date], select, textarea{
+  width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:9px;
+  font-family:var(--sans); font-size:.92rem; background:#FBFAF8; color:var(--ink);
+}
+textarea{resize:vertical; min-height:100px;}
+input:focus, select:focus, textarea:focus{border-color:var(--indigo); background:#fff;}
+.field-full{grid-column:1/-1;}
+.check-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px;}
+@media (max-width:640px){.check-grid{grid-template-columns:repeat(2,1fr);}}
+.check-item{
+  display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:9px;
+  padding:9px 12px; font-size:.85rem; background:#FBFAF8;
+}
+.radio-row{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:18px;}
+.radio-item{display:flex; align-items:center; gap:6px; font-size:.88rem;}
+.upload-box{
+  border:1.5px dashed var(--line); border-radius:12px; padding:24px; text-align:center;
+  font-size:.85rem; color:var(--ink-faint); background:#FBFAF8; margin-bottom:18px;
+}
+.upload-box strong{color:var(--indigo); font-family:var(--mono); display:block; margin-bottom:4px;}
+.declaration{display:flex; gap:10px; align-items:flex-start; font-size:.85rem; color:var(--ink-soft); margin:22px 0;}
+
+/* ---------- Dashboard layout ---------- */
+.dash-shell{display:grid; grid-template-columns:230px 1fr; gap:0; min-height:70vh;}
+@media (max-width:860px){.dash-shell{grid-template-columns:1fr;}}
+.dash-sidebar{
+  border-right:1px solid var(--line); padding:28px 18px; background:var(--paper-dim);
+}
+.dash-sidebar .side-title{font-family:var(--mono); font-size:.7rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.08em; margin:18px 0 8px;}
+.dash-sidebar a{
+  display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px;
+  font-size:.88rem; font-weight:500; color:var(--ink-soft); margin-bottom:2px;
+}
+.dash-sidebar a:hover{background:var(--card);}
+.dash-sidebar a[aria-current="page"]{background:var(--ink); color:var(--paper);}
+.dash-main{padding:36px;}
+.dash-grid{display:grid; grid-template-columns:2fr 1fr; gap:22px;}
+@media (max-width:900px){.dash-grid{grid-template-columns:1fr;}}
+
+.progress-ring{
+  width:64px; height:64px; border-radius:50%;
+  background:conic-gradient(var(--indigo) 0deg 259deg, var(--line) 259deg 360deg);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.progress-ring span{
+  width:48px; height:48px; border-radius:50%; background:var(--card);
+  display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:.78rem; font-weight:700;
+}
+
+.status-pill{
+  font-family:var(--mono); font-size:.72rem; font-weight:600; padding:4px 11px; border-radius:999px;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.status-pill::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor;}
+.status-pending{background:var(--amber-tint); color:#96701C;}
+.status-approved{background:#E4F3E9; color:var(--green);}
+.status-rejected{background:#F8E4E2; color:var(--red);}
+
+/* ---------- Table ---------- */
+.table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card);}
+table{width:100%; border-collapse:collapse; font-size:.86rem;}
+thead{background:var(--paper-dim);}
+th{
+  font-family:var(--mono); text-transform:uppercase; font-size:.7rem; letter-spacing:.05em;
+  color:var(--ink-faint); text-align:left; padding:12px 16px; border-bottom:1px solid var(--line);
+}
+td{padding:13px 16px; border-bottom:1px solid var(--line); color:var(--ink-soft);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FCFBF8;}
+
+/* ---------- Timeline ---------- */
+.timeline{position:relative; padding-left:36px; border-left:2px solid var(--line); margin-left:8px;}
+.timeline-item{position:relative; padding-bottom:38px;}
+.timeline-item:last-child{padding-bottom:0;}
+.timeline-item::before{
+  content:""; position:absolute; left:-45px; top:2px; width:16px; height:16px; border-radius:50%;
+  background:var(--card); border:3px solid var(--indigo);
+}
+.timeline-item.done::before{background:var(--indigo);}
+.timeline-item .t-date{font-family:var(--mono); font-size:.75rem; color:var(--indigo); margin-bottom:4px;}
+.timeline-item h3{font-size:1.02rem; margin-bottom:4px;}
+
+/* ---------- Accordion (CSS-only, no JS) ---------- */
+.accordion-item{border:1px solid var(--line); border-radius:var(--radius); margin-bottom:12px; background:var(--card); overflow:hidden;}
+.accordion-item summary{
+  cursor:pointer; padding:18px 22px; font-weight:600; font-size:.96rem;
+  list-style:none; display:flex; justify-content:space-between; align-items:center;
+}
+.accordion-item summary::-webkit-details-marker{display:none;}
+.accordion-item summary::after{content:"+"; font-family:var(--mono); color:var(--indigo); font-size:1.2rem;}
+.accordion-item[open] summary::after{content:"–";}
+.accordion-item .a-body{padding:0 22px 20px; color:var(--ink-soft); font-size:.92rem;}
+
+/* ---------- Leaderboard ---------- */
+.rank-badge{
+  width:32px; height:32px; border-radius:8px; background:var(--ink); color:var(--paper);
+  display:inline-flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:700; font-size:.85rem;
+}
+.rank-1 .rank-badge{background:var(--amber); color:var(--ink);}
+.rank-2 .rank-badge{background:#C7C9D1; color:var(--ink);}
+.rank-3 .rank-badge{background:#D8A272; color:var(--ink);}
+
+/* ---------- Footer ---------- */
+.site-footer{background:var(--ink); color:#B7B9C2; padding:56px 0 28px; margin-top:60px;}
+.footer-grid{display:grid; grid-template-columns:1.4fr repeat(3,1fr); gap:32px; margin-bottom:40px;}
+@media (max-width:800px){.footer-grid{grid-template-columns:1fr 1fr;}}
+.site-footer h4{color:#fff; font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:14px;}
+.site-footer a{color:#B7B9C2; font-size:.88rem; display:block; margin-bottom:9px;}
+.site-footer a:hover{color:#fff;}
+.footer-bottom{
+  border-top:1px solid #2A2C36; padding-top:22px; display:flex; justify-content:space-between;
+  font-size:.8rem; color:#7C7E88; flex-wrap:wrap; gap:10px;
+}
+.footer-logo{font-family:var(--mono); font-weight:800; color:#fff; font-size:1.1rem; margin-bottom:12px;}
+.social-row{display:flex; gap:14px;}
+.social-row a{display:inline-flex; width:34px; height:34px; border:1px solid #2A2C36; border-radius:8px; align-items:center; justify-content:center; margin:0; font-size:.78rem;}
+
+/* ---------- Misc utility ---------- */
+.pill{font-family:var(--mono); font-size:.72rem; background:var(--paper-dim); border:1px solid var(--line); padding:4px 10px; border-radius:999px; display:inline-block;}
+.mt-0{margin-top:0;} .mb-0{margin-bottom:0;}
+.center{text-align:center;}
+.commit-tag{font-family:var(--mono); font-size:.75rem; color:var(--ink-faint);}
+.commit-tag .hash{color:var(--indigo);}
+.divider{border:none; border-top:1px solid var(--line); margin:32px 0;}
+.two-col{display:grid; grid-template-columns:2fr 1fr; gap:28px;}
+@media (max-width:860px){.two-col{grid-template-columns:1fr;}}
+.avatar-placeholder{
+  width:100%; aspect-ratio:1/1; border-radius:12px; background:linear-gradient(135deg,var(--indigo-tint),var(--amber-tint));
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); color:var(--ink-faint); font-size:.75rem;
+}
+.img-placeholder{
+  width:100%; border-radius:var(--radius); background:repeating-linear-gradient(45deg,#EEEBE2,#EEEBE2 10px,#E5E1D5 10px,#E5E1D5 20px);
+  border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); color:var(--ink-faint); font-size:.78rem; min-height:200px;
+}
+
+
+/* single-page adjustments */
+.page-section { border-bottom:1px solid var(--line); scroll-margin-top:76px; }
+.page-section:last-of-type { border-bottom:none; }
+.page-main { display:block; }
+.dash-shell { min-height:auto; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav wrap" aria-label="Primary">
+    <a href="#home" class="logo">Hack<em>Forge</em></a>
+    <ul class="nav-links" style="flex-wrap:wrap; row-gap:6px;">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#register">Register</a></li>
+      <li><a href="#login">Log in</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#submission">Submission</a></li>
+      <li><a href="#leaderboard">Leaderboard</a></li>
+      <li><a href="#schedule">Schedule</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#admin">Admin</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#login" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="#register" class="btn btn-accent btn-sm">Register</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section id="home" class="page-section">
+
+
+<div class="page-main">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="prompt">register --hackathon hackforge-2026</span>
+        <h1>HackForge <span class="accent">2026</span></h1>
+        <p class="lede">Where innovation meets execution. 48 hours, one repo, no excuses — build something that ships.</p>
+        <div class="hero-actions">
+          <a href="#register" class="btn btn-primary">Register your team →</a>
+          <a href="#login" class="btn btn-ghost">Log in</a>
+        </div>
+        <div class="stats">
+          <div class="stat-card"><div class="num">500+</div><div class="label">Participants</div></div>
+          <div class="stat-card"><div class="num">100+</div><div class="label">Teams</div></div>
+          <div class="stat-card"><div class="num">48h</div><div class="label">Hackathon</div></div>
+          <div class="stat-card"><div class="num">₹1,00,000+</div><div class="label">Prize pool</div></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="line"><span class="p">$</span> hackforge status</div>
+        <div class="line muted">checking registration window…</div>
+        <div class="line"><span class="ok">✓</span> registrations open</div>
+        <div class="line muted">countdown to kickoff</div>
+        <div class="line" style="font-size:1.4rem; font-weight:700; color:#fff; margin:10px 0;">14d : 06h : 22m : 09s</div>
+        <div class="line muted">— live, updates on refresh —</div>
+        <div class="line" style="margin-top:14px;"><span class="p">$</span> git log --oneline -3</div>
+        <div class="line commit-tag"><span class="hash">a1c9e0f</span> mentor slots opened</div>
+        <div class="line commit-tag"><span class="hash">7f31bde</span> sponsor deck published</div>
+        <div class="line commit-tag"><span class="hash">3d0aa21</span> theme: open innovation added</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="wrap two-col">
+      <div>
+        <span class="prompt">cat about.md</span>
+        <h2>What is HackForge?</h2>
+        <p>HackForge is a 48-hour build sprint for students and early-career engineers — a proving ground where an idea on a whiteboard becomes a working demo by Sunday evening. No lectures, no filler: just a problem statement, a team, and a deadline.</p>
+        <p>Since its first edition, HackForge has pulled together participants from over 120 colleges to ship projects across AI, fintech, healthtech, and open innovation — judged by engineers who've actually shipped production code.</p>
+      </div>
+      <div>
+        <span class="prompt">why participate</span>
+        <ul class="grid-2" style="display:grid; grid-template-columns:1fr; gap:12px;">
+          <li class="card"><strong>Networking</strong><p class="mb-0">Meet 500+ builders, mentors, and recruiters in one room.</p></li>
+          <li class="card"><strong>Mentorship</strong><p class="mb-0">1:1 sessions with engineers from partner companies.</p></li>
+          <li class="card"><strong>Internships</strong><p class="mb-0">Top teams get fast-tracked to sponsor interview pipelines.</p></li>
+          <li class="card"><strong>Certificates, cash prizes & swag</strong><p class="mb-0">Every participant walks away with proof of work.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="prompt">ls features/</span>
+        <h2>Everything the workflow needs</h2>
+        <p>From registration to leaderboard, every step of the hackathon lifecycle lives in one portal.</p>
+      </div>
+      <div class="grid-4">
+        <div class="card"><div class="icon-box">01</div><h3>Team Registration</h3><p>Form a squad of up to 4, pick a domain, lock in a leader.</p></div>
+        <div class="card"><div class="icon-box">02</div><h3>Project Submission</h3><p>Repo, deck, and demo video — one clean submission flow.</p></div>
+        <div class="card"><div class="icon-box">03</div><h3>Real-time Status</h3><p>Track pending, approved, or rejected at a glance.</p></div>
+        <div class="card"><div class="icon-box">04</div><h3>Admin Approval</h3><p>Reviewers approve or reject with a single click.</p></div>
+        <div class="card"><div class="icon-box">05</div><h3>Leaderboard</h3><p>Live scores across innovation, technical, and presentation.</p></div>
+        <div class="card"><div class="icon-box">06</div><h3>Certificates</h3><p>Auto-generated, downloadable participation proof.</p></div>
+        <div class="card"><div class="icon-box">07</div><h3>Mentor Sessions</h3><p>Book slots with domain experts during the build window.</p></div>
+        <div class="card"><div class="icon-box">08</div><h3>Live Schedule</h3><p>Every checkpoint from kickoff to final demo.</p></div>
+        <div class="card"><div class="icon-box">09</div><h3>Email Notifications</h3><p>Status changes land straight in your inbox. <span class="pill">UI only</span></p></div>
+        <div class="card"><div class="icon-box">10</div><h3>QR Check-in</h3><p>Tap in at the venue, no paper sign-up sheets. <span class="pill">UI only</span></p></div>
+        <div class="card"><div class="icon-box">11</div><h3>Badges & Achievements</h3><p>Unlock badges for milestones — first commit to final submit.</p></div>
+        <div class="card"><div class="icon-box">12</div><h3>Profile Completion</h3><p>A ring that tracks how dashboard-ready you are.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRIZES -->
+  <section class="section" id="prizes">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="prompt">cat prizes.json</span>
+        <h2>Prize pool — ₹1,00,000+</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card"><span class="tag">Winner</span><h3>₹50,000 + internship interviews</h3><p>Top team across all judging criteria.</p></div>
+        <div class="card"><span class="tag">Runner-up</span><h3>₹30,000 + mentor slots</h3><p>Second place across the leaderboard.</p></div>
+        <div class="card"><span class="tag">Best Domain Solution</span><h3>₹20,000 across 5 tracks</h3><p>Best in AI, FinTech, HealthTech, Blockchain, Open Innovation.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPONSORS -->
+  <section class="section section-alt" id="sponsors">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="prompt">cat sponsors.yml</span>
+        <h2>Backed by teams who ship</h2>
+      </div>
+      <h4 style="font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em;">Gold sponsors</h4>
+      <div class="grid-4" style="margin-bottom:30px;">
+        <div class="img-placeholder" style="min-height:90px;">Sponsor A</div>
+        <div class="img-placeholder" style="min-height:90px;">Sponsor B</div>
+      </div>
+      <h4 style="font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em;">Silver sponsors</h4>
+      <div class="grid-4" style="margin-bottom:30px;">
+        <div class="img-placeholder" style="min-height:70px;">Sponsor C</div>
+        <div class="img-placeholder" style="min-height:70px;">Sponsor D</div>
+        <div class="img-placeholder" style="min-height:70px;">Sponsor E</div>
+      </div>
+      <h4 style="font-family:var(--mono); font-size:.8rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em;">Community partners</h4>
+      <div class="grid-4">
+        <div class="img-placeholder" style="min-height:60px;">Partner F</div>
+        <div class="img-placeholder" style="min-height:60px;">Partner G</div>
+        <div class="img-placeholder" style="min-height:60px;">Partner H</div>
+        <div class="img-placeholder" style="min-height:60px;">Partner I</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="prompt">git log --author=winners</span>
+        <h2>Previous winners</h2>
+      </div>
+      <div class="grid-3">
+        <div class="testimonial"><p>"We shipped a working RAG prototype in 40 hours flat. The mentor sessions alone were worth showing up for."</p><div class="who">— Team Nimbus, Winner 2025</div></div>
+        <div class="testimonial"><p>"Best-organized hackathon we've been to. The dashboard made tracking submission status painless."</p><div class="who">— Team Circuit, Runner-up 2025</div></div>
+        <div class="testimonial"><p>"Landed our internship interview off the back of this. HackForge is the real thing."</p><div class="who">— Team Vertex, Best FinTech 2025</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENT HIGHLIGHTS -->
+  <section class="section section-alt">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="prompt">ls gallery/</span>
+        <h2>Event highlights</h2>
+      </div>
+      <div class="grid-4">
+        <div class="img-placeholder">Photo 01</div>
+        <div class="img-placeholder">Photo 02</div>
+        <div class="img-placeholder">Photo 03</div>
+        <div class="img-placeholder">Photo 04</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+</section><section id="register" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap" style="max-width:820px;">
+    <span class="prompt">register --participant</span>
+    <h1 style="font-size:2.2rem;">Participant registration</h1>
+    <p>Every field here builds your HackForge profile — it feeds your dashboard, your certificate, and your team invite.</p>
+
+    <form class="form-card" action="#" method="post">
+
+      <div class="form-section-title">Personal details</div>
+      <div class="field-row">
+        <div><label for="fullname">Full name</label><input type="text" id="fullname" name="fullname" placeholder="Ada Lovelace" required></div>
+        <div><label for="reg-email">Email</label><input type="email" id="reg-email" name="email" placeholder="ada@college.edu" required></div>
+      </div>
+      <div class="field-row">
+        <div><label for="phone">Phone</label><input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required></div>
+        <div><label for="rollno">Roll number</label><input type="text" id="rollno" name="rollno" placeholder="21CE045"></div>
+      </div>
+
+      <div class="form-section-title">Academic details</div>
+      <div class="field-row">
+        <div><label for="college">College / University</label><input type="text" id="college" name="college" placeholder="Mumbai University"></div>
+        <div><label for="department">Department</label><input type="text" id="department" name="department" placeholder="Computer Engineering"></div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label for="year">Year</label>
+          <select id="year" name="year">
+            <option>First Year</option><option>Second Year</option><option selected>Third Year</option><option>Final Year</option>
+          </select>
+        </div>
+        <div><label for="tshirt">T-shirt size</label>
+          <select id="tshirt" name="tshirt">
+            <option>S</option><option>M</option><option selected>L</option><option>XL</option><option>XXL</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Links & portfolio</div>
+      <div class="field-row">
+        <div><label for="github">GitHub<span class="hint">optional</span></label><input type="url" id="github" name="github" placeholder="github.com/username"></div>
+        <div><label for="linkedin">LinkedIn<span class="hint">optional</span></label><input type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/username"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-full"><label for="portfolio">Portfolio<span class="hint">optional</span></label><input type="url" id="portfolio" name="portfolio" placeholder="yourname.dev"></div>
+      </div>
+      <div class="upload-box">
+        <strong>drop resume here</strong>
+        Resume upload — PDF, up to 5MB <span class="pill">placeholder</span>
+      </div>
+
+      <div class="form-section-title">Skills</div>
+      <div class="check-grid">
+        <label class="check-item"><input type="checkbox" name="skills" value="java"> Java</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="python"> Python</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="web"> Web</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="ai"> AI</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="ml"> ML</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="cloud"> Cloud</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="android"> Android</label>
+        <label class="check-item"><input type="checkbox" name="skills" value="uiux"> UI/UX</label>
+      </div>
+
+      <div class="form-section-title">Experience level</div>
+      <div class="radio-row">
+        <label class="radio-item"><input type="radio" name="experience" value="beginner"> Beginner</label>
+        <label class="radio-item"><input type="radio" name="experience" value="intermediate" checked> Intermediate</label>
+        <label class="radio-item"><input type="radio" name="experience" value="advanced"> Advanced</label>
+      </div>
+
+      <div class="form-section-title">Logistics</div>
+      <div class="field-row">
+        <div>
+          <label>Food preference</label>
+          <div class="radio-row" style="margin-bottom:0;">
+            <label class="radio-item"><input type="radio" name="food" value="veg" checked> Veg</label>
+            <label class="radio-item"><input type="radio" name="food" value="nonveg"> Non-veg</label>
+          </div>
+        </div>
+        <div><label for="emergency">Emergency contact</label><input type="tel" id="emergency" name="emergency" placeholder="+91 90000 00000"></div>
+      </div>
+
+      <div class="declaration">
+        <input type="checkbox" id="declare" required style="margin-top:3px;">
+        <label for="declare" style="margin:0; font-weight:400;">I declare that the information above is accurate and I agree to the HackForge <a href="#contact" style="color:var(--indigo);">code of conduct</a> and terms.</label>
+      </div>
+
+      <button type="submit" class="btn btn-accent btn-block">Complete registration →</button>
+      <p style="text-align:center; font-size:.82rem; margin-top:14px;">Already registered? <a href="#login" style="color:var(--indigo); font-weight:600;">Log in</a></p>
+    </form>
+  </div>
+</div>
+
+
+</section><section id="login" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap" style="max-width:440px;">
+    <span class="prompt">auth --login</span>
+    <h1 style="font-size:2rem;">Welcome back</h1>
+    <p>Log in to check your team status, submission, and dashboard.</p>
+
+    <form class="form-card" action="#" method="post">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" name="email" placeholder="ada@college.edu" required style="margin-bottom:18px;">
+      <label for="password">Password</label>
+      <input type="text" id="password" name="password" placeholder="••••••••" required style="margin-bottom:6px;">
+      <p style="text-align:right; font-size:.8rem; margin-bottom:18px;"><a href="#contact" style="color:var(--indigo);">Forgot password?</a></p>
+      <button type="submit" class="btn btn-accent btn-block">Log in →</button>
+      <p style="text-align:center; font-size:.82rem; margin-top:16px;">New here? <a href="#register" style="color:var(--indigo); font-weight:600;">Create an account</a></p>
+    </form>
+
+    <div class="card center" style="margin-top:24px;">
+      <span class="tag">Admin?</span>
+      <p class="mb-0">Head to the <a href="#admin" style="color:var(--indigo); font-weight:600;">admin dashboard</a> instead.</p>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="team" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap" style="max-width:900px;">
+    <span class="prompt">team --init</span>
+    <h1 style="font-size:2.2rem;">Build your team</h1>
+    <p>Create a new team or join one with an invite code. Squads top out at 4 builders.</p>
+
+    <div class="grid-2" style="margin-bottom:32px;">
+      <div class="card">
+        <span class="tag">Create</span>
+        <h3>Create a new team</h3>
+        <p>You'll become team leader and get an auto-generated invite code to share.</p>
+        <a href="#create" class="btn btn-primary btn-sm">Start here ↓</a>
+      </div>
+      <div class="card">
+        <span class="tag">Join</span>
+        <h3>Join an existing team</h3>
+        <input type="text" placeholder="Enter invite code, e.g. HF-7X2K9" style="margin-bottom:12px;">
+        <a href="#" class="btn btn-ghost btn-sm">Join team</a>
+      </div>
+    </div>
+
+    <form class="form-card" id="create" action="#" method="post">
+      <div class="form-section-title">Team identity</div>
+      <div class="field-row">
+        <div><label for="tname">Team name</label><input type="text" id="tname" placeholder="Team Nimbus"></div>
+        <div><label for="ttheme">Team theme</label><input type="text" id="ttheme" placeholder="Cloud-native tools"></div>
+      </div>
+      <div class="field-row">
+        <div class="field-full"><label for="motto">Team motto</label><input type="text" id="motto" placeholder="Ship first, sleep later."></div>
+      </div>
+      <div class="field-row">
+        <div>
+          <label>Team avatar</label>
+          <div class="avatar-placeholder" style="max-width:110px; aspect-ratio:1/1;">avatar</div>
+        </div>
+        <div>
+          <label>Auto-generated</label>
+          <p class="pill" style="margin-bottom:8px;">Team ID: HF-TEAM-0148</p><br>
+          <p class="pill">Invite code: HF-7X2K9</p>
+        </div>
+      </div>
+
+      <div class="form-section-title">Members (max 4)</div>
+      <div class="field-row">
+        <div><label for="leader">Select team leader</label>
+          <select id="leader"><option>Ada Lovelace (you)</option><option>Member 2</option><option>Member 3</option><option>Member 4</option></select>
+        </div>
+        <div><label for="m1">Member 1 email</label><input type="email" id="m1" placeholder="ada@college.edu"></div>
+      </div>
+      <div class="field-row">
+        <div><label for="m2">Member 2 email</label><input type="email" id="m2" placeholder="teammate2@college.edu"></div>
+        <div><label for="m3">Member 3 email</label><input type="email" id="m3" placeholder="teammate3@college.edu"></div>
+      </div>
+      <div class="field-row">
+        <div><label for="m4">Member 4 email<span class="hint">optional</span></label><input type="email" id="m4" placeholder="teammate4@college.edu"></div>
+        <div></div>
+      </div>
+
+      <div class="form-section-title">Domain & tech</div>
+      <div class="field-row">
+        <div><label for="domain">Domain</label>
+          <select id="domain">
+            <option>AI</option><option>Blockchain</option><option>Cyber Security</option>
+            <option>Healthcare</option><option>Education</option><option>FinTech</option><option selected>Open Innovation</option>
+          </select>
+        </div>
+        <div><label for="team-stack">Technology stack</label><input type="text" id="team-stack" placeholder="React, FastAPI, PostgreSQL"></div>
+      </div>
+
+      <div class="form-section-title">Project idea</div>
+      <div class="field-row">
+        <div class="field-full"><label for="problem">Problem statement</label><textarea id="problem" placeholder="What problem are you solving?"></textarea></div>
+      </div>
+      <div class="field-row">
+        <div class="field-full"><label for="outcome">Expected outcome</label><textarea id="outcome" placeholder="What will the working demo do?"></textarea></div>
+      </div>
+      <div class="field-row">
+        <div><label for="short">Short description</label><textarea id="short" placeholder="One-line pitch"></textarea></div>
+        <div><label for="long">Long description</label><textarea id="long" placeholder="Full project concept"></textarea></div>
+      </div>
+
+      <button type="submit" class="btn btn-accent btn-block">Save team →</button>
+    </form>
+  </div>
+</div>
+
+
+</section><section id="dashboard" class="page-section">
+
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <div class="side-title">Overview</div>
+    <a href="#dashboard" aria-current="page">Dashboard</a>
+    <a href="#">Profile</a>
+    <a href="#">Notifications</a>
+    <div class="side-title">Hackathon</div>
+    <a href="#team">Team</a>
+    <a href="#submission">Submission</a>
+    <a href="#schedule">Timeline</a>
+    <a href="#leaderboard">Leaderboard</a>
+    <div class="side-title">Account</div>
+    <a href="#">Certificate</a>
+    <a href="#login">Log out</a>
+  </aside>
+
+  <div class="page-main">
+    <span class="prompt">whoami --dashboard</span>
+    <h1 style="font-size:1.9rem;">Welcome back, Ada 👋</h1>
+    <p>Team Nimbus · Open Innovation · Status: <span class="status-pill status-pending">pending review</span></p>
+
+    <div class="dash-grid" style="margin-top:24px;">
+      <div>
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Profile</span>
+          <div style="display:flex; align-items:center; gap:18px;">
+            <div class="progress-ring"><span>82%</span></div>
+            <div>
+              <h3 class="mb-0">Profile completion</h3>
+              <p class="mb-0">Add your resume to reach 100%.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Team</span>
+          <h3>Team Nimbus</h3>
+          <p>Domain: Open Innovation · Invite code: HF-7X2K9</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <span class="pill">Ada Lovelace (Leader)</span>
+            <span class="pill">Grace Hopper</span>
+            <span class="pill">Alan Turing</span>
+            <span class="pill">Margaret Hamilton</span>
+          </div>
+          <a href="#team" class="btn btn-ghost btn-sm">View team →</a>
+        </div>
+
+        <div class="card">
+          <span class="tag">Project</span>
+          <h3>AI-Powered Study Companion</h3>
+          <p>Status: <span class="status-pill status-pending">pending</span> · Last updated 2 hours ago</p>
+          <a href="#submission" class="btn btn-ghost btn-sm">View submission →</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Mentor assigned</span>
+          <h3 class="mb-0">Priya Menon</h3>
+          <p>Senior Engineer, Cloud Platforms — book a slot before Day 2.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Upcoming</span>
+          <h3 class="mb-0">Mid-evaluation</h3>
+          <p>Sat, Day 1 · 6:00 PM — have a working demo ready.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Announcements</span>
+          <p style="margin-bottom:8px;">📣 Mentor booking window closes tonight at 11 PM.</p>
+          <p class="mb-0">📣 Wi-Fi credentials posted in the venue guide.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;">
+          <span class="tag">Attendance</span>
+          <p class="mb-0">Checked in: <strong>Yes</strong> · Day 1, 9:04 AM</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Achievements</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span class="pill">🏅 First commit</span>
+            <span class="pill">🏅 Team complete</span>
+            <span class="pill">🏅 Idea submitted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:22px;">
+      <span class="tag">Certificate</span>
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <p class="mb-0">Available after event completion.</p>
+        <button class="btn btn-ghost btn-sm" disabled>Download certificate <span class="pill">placeholder</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="submission" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap two-col">
+    <div>
+      <span class="prompt">submit --project</span>
+      <h1 style="font-size:2rem;">Submit your project</h1>
+      <p>Submissions lock 30 minutes before final judging. Save early, save often.</p>
+
+      <form class="form-card" action="#" method="post">
+        <div class="form-section-title">Project overview</div>
+        <div class="field-row">
+          <div class="field-full"><label for="pname">Project name</label><input type="text" id="pname" placeholder="StudyMate AI"></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="pstatement">Problem statement</label><textarea id="pstatement" placeholder="What problem does this solve?"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="solution">Solution</label><textarea id="solution" placeholder="How does your project solve it?"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="architecture">Architecture</label><textarea id="architecture" placeholder="High-level system design"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="features">Key features</label><textarea id="features" placeholder="Bullet the core features"></textarea></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="sub-stack">Technology stack</label><input type="text" id="sub-stack" placeholder="React, FastAPI, DeepSeek API, PostgreSQL"></div>
+        </div>
+
+        <div class="form-section-title">Links</div>
+        <div class="field-row">
+          <div><label for="repo">GitHub repository</label><input type="url" id="repo" placeholder="github.com/team-nimbus/studymate"></div>
+          <div><label for="demo">Live demo</label><input type="url" id="demo" placeholder="studymate.vercel.app"></div>
+        </div>
+        <div class="field-row">
+          <div><label for="deck">Presentation link</label><input type="url" id="deck" placeholder="drive.google.com/…"></div>
+          <div><label for="video">Video demo</label><input type="url" id="video" placeholder="youtube.com/watch?v=…"></div>
+        </div>
+
+        <div class="form-section-title">Files</div>
+        <div class="upload-box"><strong>drop PPT here</strong>Upload presentation — .pptx, up to 25MB <span class="pill">placeholder</span></div>
+        <div class="upload-box"><strong>drop ZIP here</strong>Upload source code — .zip, up to 100MB <span class="pill">placeholder</span></div>
+        <div class="upload-box"><strong>drop thumbnail here</strong>Upload project thumbnail — .png/.jpg <span class="pill">placeholder</span></div>
+
+        <button type="submit" class="btn btn-accent btn-block">Submit project →</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <span class="tag">Submission checklist</span>
+        <ul style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+          <li>✅ Problem statement written</li>
+          <li>✅ GitHub repo linked</li>
+          <li>⬜ Demo video uploaded</li>
+          <li>⬜ Presentation deck attached</li>
+          <li>⬜ Final review by team leader</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag">Status</span>
+        <p>Current: <span class="status-pill status-pending">pending</span></p>
+        <p class="mb-0">Deadline: Sunday, 4:00 PM IST</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="leaderboard" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap">
+    <span class="prompt">scores --live</span>
+    <h1 style="font-size:2rem;">Leaderboard</h1>
+    <p>Scored across innovation, technical execution, presentation, and bonus points. Refreshed after each judging round.</p>
+
+    <div class="grid-3" style="margin-bottom:36px;">
+      <div class="card center rank-1"><span class="rank-badge">1</span><h3 style="margin-top:12px;">Team Nimbus</h3><p>Mumbai University · 94.5 pts</p></div>
+      <div class="card center rank-2"><span class="rank-badge">2</span><h3 style="margin-top:12px;">Team Circuit</h3><p>VJTI · 91.2 pts</p></div>
+      <div class="card center rank-3"><span class="rank-badge">3</span><h3 style="margin-top:12px;">Team Vertex</h3><p>SPIT · 89.8 pts</p></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Rank</th><th>Team</th><th>College</th><th>Innovation</th><th>Presentation</th><th>Technical</th><th>Bonus</th><th>Score</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rank-badge">1</span></td><td>Team Nimbus</td><td>Mumbai University</td><td>24/25</td><td>23/25</td><td>24/25</td><td>3.5/5</td><td><strong>94.5</strong></td></tr>
+          <tr><td><span class="rank-badge">2</span></td><td>Team Circuit</td><td>VJTI</td><td>23/25</td><td>22/25</td><td>23/25</td><td>3.2/5</td><td><strong>91.2</strong></td></tr>
+          <tr><td><span class="rank-badge">3</span></td><td>Team Vertex</td><td>SPIT</td><td>22/25</td><td>22/25</td><td>22/25</td><td>3.8/5</td><td><strong>89.8</strong></td></tr>
+          <tr><td><span class="rank-badge">4</span></td><td>Team Byteforce</td><td>KJSCE</td><td>21/25</td><td>21/25</td><td>22/25</td><td>3.0/5</td><td><strong>87.0</strong></td></tr>
+          <tr><td><span class="rank-badge">5</span></td><td>Team Quantum</td><td>DJ Sanghvi</td><td>20/25</td><td>21/25</td><td>21/25</td><td>2.9/5</td><td><strong>84.9</strong></td></tr>
+          <tr><td><span class="rank-badge">6</span></td><td>Team Aether</td><td>Thadomal Shahani</td><td>20/25</td><td>19/25</td><td>21/25</td><td>2.5/5</td><td><strong>82.5</strong></td></tr>
+          <tr><td><span class="rank-badge">7</span></td><td>Team Cipher</td><td>Fr. CRCE</td><td>19/25</td><td>19/25</td><td>20/25</td><td>2.6/5</td><td><strong>80.6</strong></td></tr>
+          <tr><td><span class="rank-badge">8</span></td><td>Team Orbit</td><td>Xavier's Institute</td><td>18/25</td><td>19/25</td><td>19/25</td><td>2.4/5</td><td><strong>78.4</strong></td></tr>
+          <tr><td><span class="rank-badge">9</span></td><td>Team Flux</td><td>Rajiv Gandhi Inst.</td><td>18/25</td><td>18/25</td><td>18/25</td><td>2.2/5</td><td><strong>76.2</strong></td></tr>
+          <tr><td><span class="rank-badge">10</span></td><td>Team Ember</td><td>Atharva College</td><td>17/25</td><td>17/25</td><td>18/25</td><td>2.0/5</td><td><strong>74.0</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="schedule" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap two-col">
+    <div>
+      <span class="prompt">git log --oneline --all</span>
+      <h1 style="font-size:2rem;">Hackathon timeline</h1>
+      <p>Every checkpoint, from registration opening to the final announcement. Times shown in IST.</p>
+
+      <div class="timeline" style="margin-top:32px;">
+        <div class="timeline-item done"><div class="t-date">Jul 01, 09:00 AM</div><h3>Registration opens</h3><p>Individual profiles go live across the portal.</p></div>
+        <div class="timeline-item done"><div class="t-date">Jul 20, 11:59 PM</div><h3>Registration closes</h3><p>Last call to lock in your participant profile.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 22, 06:00 PM</div><h3>Team formation deadline</h3><p>Teams of up to 4 finalized, domains locked.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 24, 04:00 PM</div><h3>Mentor session</h3><p>Optional 1:1 slots with domain mentors before kickoff.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 25, 09:00 AM</div><h3>Hack starts</h3><p>48-hour build window opens. Check-in required on arrival.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 26, 06:00 PM</div><h3>Mid-evaluation</h3><p>Show a working demo checkpoint to your assigned mentor.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 27, 08:00 AM</div><h3>Final submission</h3><p>Repo, deck, and video demo lock at 8:00 AM sharp.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 27, 11:00 AM</div><h3>Presentations</h3><p>Top teams present live to the judging panel.</p></div>
+        <div class="timeline-item"><div class="t-date">Jul 27, 05:00 PM</div><h3>Winner announcement</h3><p>Leaderboard finalized, prizes awarded on stage.</p></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:20px;">
+        <span class="tag">Progress</span>
+        <h3 class="mb-0">Event progress</h3>
+        <div style="background:var(--paper-dim); border-radius:999px; height:10px; margin:14px 0; overflow:hidden;">
+          <div style="background:var(--indigo); width:22%; height:100%;"></div>
+        </div>
+        <p class="mb-0">Registration phase — 22% through the full timeline.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Reminder</span>
+        <p class="mb-0">Add the schedule to your calendar so your team never misses a checkpoint.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="faq" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap" style="max-width:760px;">
+    <span class="prompt">man hackforge</span>
+    <h1 style="font-size:2rem;">Frequently asked questions</h1>
+    <p>Still stuck after reading these? <a href="#contact" style="color:var(--indigo);">Reach out to the team</a>.</p>
+
+    <div style="margin-top:28px;">
+      <details class="accordion-item" open>
+        <summary>Who can participate?</summary>
+        <div class="a-body">Any currently enrolled undergraduate or postgraduate student is eligible. You'll need a valid college ID at check-in.</div>
+      </details>
+      <details class="accordion-item">
+        <summary>What's the maximum team size?</summary>
+        <div class="a-body">Teams can have up to 4 members. Solo participants can register individually and get matched during team formation.</div>
+      </details>
+      <details class="accordion-item">
+        <summary>What are the eligibility requirements?</summary>
+        <div class="a-body">Open to students across all years and departments. At least one team member must have basic familiarity with version control (Git).</div>
+      </details>
+      <details class="accordion-item">
+        <summary>Will I get a certificate?</summary>
+        <div class="a-body">Yes — every registered participant who checks in and submits a project receives a digital certificate, downloadable from the dashboard after the event.</div>
+      </details>
+      <details class="accordion-item">
+        <summary>What do I need to submit?</summary>
+        <div class="a-body">A GitHub repository link, a short presentation deck, and a demo video are required. A live deployed demo is optional but strongly recommended.</div>
+      </details>
+      <details class="accordion-item">
+        <summary>How is judging decided?</summary>
+        <div class="a-body">Projects are scored across four criteria: innovation, technical execution, presentation quality, and bonus points for real-world impact.</div>
+      </details>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="contact" class="page-section">
+
+
+<div class="page-main">
+  <div class="wrap two-col">
+    <div>
+      <span class="prompt">contact --send</span>
+      <h1 style="font-size:2rem;">Get in touch</h1>
+      <p>Questions about registration, sponsorship, or logistics — the organizing team replies within one business day.</p>
+
+      <form class="form-card" action="#" method="post">
+        <div class="field-row">
+          <div><label for="cname">Name</label><input type="text" id="cname" placeholder="Your name"></div>
+          <div><label for="cemail">Email</label><input type="email" id="cemail" placeholder="you@college.edu"></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="csubject">Subject</label><input type="text" id="csubject" placeholder="Sponsorship enquiry"></div>
+        </div>
+        <div class="field-row">
+          <div class="field-full"><label for="cmessage">Message</label><textarea id="cmessage" placeholder="How can we help?"></textarea></div>
+        </div>
+        <button type="submit" class="btn btn-accent btn-block">Send message →</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="img-placeholder" style="min-height:220px; margin-bottom:20px;">Map placeholder</div>
+      <div class="card" style="margin-bottom:16px;">
+        <span class="tag">Email</span>
+        <p class="mb-0">hello@hackforge2026.dev</p>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <span class="tag">Phone</span>
+        <p class="mb-0">+91 22 4000 1234</p>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <span class="tag">Address</span>
+        <p class="mb-0">HackForge HQ, Innovation Campus, Mumbai, Maharashtra 400001</p>
+      </div>
+      <div class="card">
+        <span class="tag">Follow along</span>
+        <div class="social-row" style="margin-top:10px;">
+          <a href="#" style="border-color:var(--line); color:var(--ink);">X</a>
+          <a href="#" style="border-color:var(--line); color:var(--ink);">IG</a>
+          <a href="#" style="border-color:var(--line); color:var(--ink);">in</a>
+          <a href="#" style="border-color:var(--line); color:var(--ink);">D</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section><section id="admin" class="page-section">
+
+
+<div class="dash-shell">
+  <aside class="dash-sidebar">
+    <div class="side-title">Overview</div>
+    <a href="#admin" aria-current="page">Statistics</a>
+    <a href="#activity">Recent activity</a>
+    <a href="#logs">System logs</a>
+    <div class="side-title">Manage</div>
+    <a href="#participants">Participants</a>
+    <a href="#teams">Teams</a>
+    <a href="#projects">Projects</a>
+    <div class="side-title">Communicate</div>
+    <a href="#announcements">Announcements</a>
+    <div class="side-title">Reports</div>
+    <a href="#reports">Export & reports</a>
+  </aside>
+
+  <div class="page-main">
+    <span class="prompt">admin --overview</span>
+    <h1 style="font-size:1.9rem;">Admin dashboard</h1>
+    <p>Full visibility into registrations, teams, and project reviews.</p>
+
+    <div class="grid-4" style="margin:24px 0 36px;">
+      <div class="stat-card"><div class="num">512</div><div class="label">Registered participants</div></div>
+      <div class="stat-card"><div class="num">128</div><div class="label">Registered teams</div></div>
+      <div class="stat-card"><div class="num">96</div><div class="label">Submitted projects</div></div>
+      <div class="stat-card"><div class="num">54</div><div class="label">Approved projects</div></div>
+      <div class="stat-card"><div class="num">12</div><div class="label">Rejected projects</div></div>
+      <div class="stat-card"><div class="num">30</div><div class="label">Pending review</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:32px;">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+        <input type="text" placeholder="Search participants, teams, or projects…" style="flex:1; min-width:220px;">
+        <select style="max-width:160px;"><option>All statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+        <select style="max-width:160px;"><option>All domains</option><option>AI</option><option>FinTech</option><option>Healthcare</option></select>
+        <button class="btn btn-primary btn-sm">Filter</button>
+      </div>
+    </div>
+
+    <section id="participants" style="margin-bottom:40px;">
+      <h2 style="font-size:1.2rem;">Participants</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>College</th><th>Email</th><th>Skills</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Ada Lovelace</td><td>Mumbai University</td><td>ada@college.edu</td><td>AI, Web</td><td><span class="status-pill status-approved">verified</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+            <tr><td>Grace Hopper</td><td>VJTI</td><td>grace@college.edu</td><td>Cloud, ML</td><td><span class="status-pill status-approved">verified</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+            <tr><td>Alan Turing</td><td>SPIT</td><td>alan@college.edu</td><td>Python, AI</td><td><span class="status-pill status-pending">pending</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+            <tr><td>Margaret Hamilton</td><td>KJSCE</td><td>margaret@college.edu</td><td>Java, UI/UX</td><td><span class="status-pill status-approved">verified</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="teams" style="margin-bottom:40px;">
+      <h2 style="font-size:1.2rem;">Teams</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Team</th><th>Domain</th><th>Members</th><th>Leader</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Team Nimbus</td><td>Open Innovation</td><td>4</td><td>Ada Lovelace</td><td><span class="status-pill status-approved">complete</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+            <tr><td>Team Circuit</td><td>FinTech</td><td>3</td><td>Grace Hopper</td><td><span class="status-pill status-pending">forming</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+            <tr><td>Team Vertex</td><td>Healthcare</td><td>4</td><td>Alan Turing</td><td><span class="status-pill status-approved">complete</span></td><td><a href="#" style="color:var(--indigo);">View</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="projects" style="margin-bottom:40px;">
+      <h2 style="font-size:1.2rem;">Projects</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Project</th><th>Team</th><th>Domain</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>AI Study Companion</td><td>Team Nimbus</td><td>Open Innovation</td><td>Jul 27, 07:40 AM</td>
+              <td><span class="status-pill status-pending">pending</span></td>
+              <td style="display:flex; gap:6px;"><button class="btn btn-sm" style="background:var(--green); color:#fff;">Approve</button><button class="btn btn-sm" style="background:var(--red); color:#fff;">Reject</button></td>
+            </tr>
+            <tr>
+              <td>SmartLedger</td><td>Team Circuit</td><td>FinTech</td><td>Jul 27, 07:12 AM</td>
+              <td><span class="status-pill status-approved">approved</span></td>
+              <td style="display:flex; gap:6px;"><button class="btn btn-sm btn-ghost">View details</button></td>
+            </tr>
+            <tr>
+              <td>CareTrack</td><td>Team Vertex</td><td>Healthcare</td><td>Jul 27, 06:58 AM</td>
+              <td><span class="status-pill status-rejected">rejected</span></td>
+              <td style="display:flex; gap:6px;"><button class="btn btn-sm btn-ghost">View details</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex; gap:12px; margin-top:16px;">
+        <button class="btn btn-ghost btn-sm">Export CSV <span class="pill">placeholder</span></button>
+        <button class="btn btn-ghost btn-sm" id="reports">Generate report <span class="pill">placeholder</span></button>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <div class="card" id="announcements">
+        <span class="tag">Announcements panel</span>
+        <textarea placeholder="Write an announcement to broadcast to all participants…" style="margin-bottom:12px;"></textarea>
+        <button class="btn btn-primary btn-sm">Broadcast</button>
+      </div>
+      <div class="card" id="activity">
+        <span class="tag">Recent activity</span>
+        <ul style="display:flex; flex-direction:column; gap:10px; font-size:.88rem; color:var(--ink-soft);">
+          <li class="commit-tag"><span class="hash">a1c9e0f</span> Team Nimbus submitted project</li>
+          <li class="commit-tag"><span class="hash">7f31bde</span> Admin approved SmartLedger</li>
+          <li class="commit-tag"><span class="hash">3d0aa21</span> Team Vertex updated repo link</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" id="logs" style="margin-top:24px;">
+      <span class="tag">System logs</span>
+      <div class="terminal" style="margin-top:10px;">
+        <div class="line"><span class="p">$</span> tail -f system.log</div>
+        <div class="line muted">[07:41:02] auth: admin login success</div>
+        <div class="line muted">[07:40:58] db: project row updated (id=96)</div>
+        <div class="line muted">[07:40:12] mail: notification queued (12 recipients)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">hackforge</div>
+        <p style="color:#8C8E97; font-size:.88rem;">A 48-hour build sprint for engineers who'd rather ship than sit through slides.</p>
+        <div class="social-row">
+          <a href="#contact" aria-label="Twitter">X</a>
+          <a href="#contact" aria-label="Instagram">IG</a>
+          <a href="#contact" aria-label="LinkedIn">in</a>
+          <a href="#contact" aria-label="Discord">D</a>
+        </div>
+      </div>
+      <div>
+        <h4>Event</h4>
+        <a href="#schedule">Timeline</a>
+        <a href="#prizes">Prizes</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#leaderboard">Leaderboard</a>
+      </div>
+      <div>
+        <h4>Participate</h4>
+        <a href="#register">Register</a>
+        <a href="#team">Build a team</a>
+        <a href="#login">Log in</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#contact">Contact</a>
+        <a href="#contact">Privacy policy</a>
+        <a href="#contact">Terms</a>
+        <a href="#admin">Admin</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 HackForge. All rights reserved.</span>
+      <span>Built for builders.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
